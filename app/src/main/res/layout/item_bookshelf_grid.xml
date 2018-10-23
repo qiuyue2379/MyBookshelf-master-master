@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="5dp">
+
+    <View
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1" />
+
+    <RelativeLayout
+        android:id="@+id/fl_content"
+        android:layout_width="85dp"
+        android:layout_height="116dp"
+        android:layout_gravity="center"
+        android:visibility="invisible">
+
+        <ImageView
+            android:id="@+id/iv_cover"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            android:src="@drawable/img_cover_default"
+            android:transitionName="img_cover"
+            tools:ignore="UnusedAttribute" />
+
+        <FrameLayout
+            android:id="@+id/fl_has_new"
+            android:layout_width="26dp"
+            android:layout_height="26dp"
+            android:layout_alignParentRight="true"
+            tools:ignore="RtlHardcoded">
+
+            <android.support.v7.widget.AppCompatImageView
+                android:id="@+id/iv_has_new"
+                android:layout_width="26dp"
+                android:layout_height="26dp"
+                android:padding="6dp"
+                android:src="@drawable/ic_circle_red_24dp"
+                app:tint="@color/colorAccent"
+                android:visibility="invisible" />
+
+            <com.victor.loading.rotate.RotateLoading
+                android:id="@+id/rl_loading"
+                android:layout_width="26dp"
+                android:layout_height="26dp"
+                android:layout_gravity="center"
+                android:visibility="invisible"
+                app:loading_color="@color/white"
+                app:loading_width="2dp" />
+
+        </FrameLayout>
+
+        <com.monke.mprogressbar.MHorProgressBar
+            android:id="@+id/mpb_durProgress"
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:layout_alignParentBottom="true"
+            android:visibility="invisible"
+            app:bgdrawable="@color/white"
+            app:cantouch="false"
+            app:fontdrawable="@color/d_blue"
+            tools:ignore="RtlHardcoded" />
+
+        <ImageButton
+            android:id="@+id/ib_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/bg_ib_pre" />
+
+    </RelativeLayout>
+
+    <me.grantland.widget.AutofitTextView
+        android:id="@+id/tv_name"
+        android:layout_width="match_parent"
+        android:layout_height="26dp"
+        android:layout_gravity="center_horizontal|bottom"
+        android:gravity="center"
+        android:paddingLeft="2dp"
+        android:paddingRight="2dp"
+        android:singleLine="true"
+        android:text="ss"
+        android:textSize="12sp"
+        app:minTextSize="10sp" />
+
+    <View
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1" />
+
+</LinearLayout>
