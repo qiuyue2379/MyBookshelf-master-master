@@ -42,5 +42,4 @@ public abstract class BaseExpandAbleViewHolder extends RecyclerView.ViewHolder {
      */
     public abstract int getGroupViewResId();
 
-
 }

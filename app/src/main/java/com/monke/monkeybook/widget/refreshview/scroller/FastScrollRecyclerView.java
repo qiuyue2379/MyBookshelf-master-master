@@ -239,7 +239,6 @@ public class FastScrollRecyclerView extends RecyclerView {
 
     }
 
-
     private void layout(Context context, AttributeSet attrs) {
 
         mFastScroller = new FastScroller(context, attrs);

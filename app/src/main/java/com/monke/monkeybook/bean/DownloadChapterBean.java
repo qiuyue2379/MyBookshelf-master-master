@@ -37,7 +37,7 @@ public class DownloadChapterBean implements Parcelable {
 
     @Generated(hash = 757008458)
     public DownloadChapterBean(String noteUrl, int durChapterIndex, String durChapterUrl,
-            String durChapterName, String tag, String bookName, String coverUrl) {
+                               String durChapterName, String tag, String bookName, String coverUrl) {
         this.noteUrl = noteUrl;
         this.durChapterIndex = durChapterIndex;
         this.durChapterUrl = durChapterUrl;

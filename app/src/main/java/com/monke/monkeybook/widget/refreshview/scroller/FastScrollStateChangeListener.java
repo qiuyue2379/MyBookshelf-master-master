@@ -1,7 +1,6 @@
 package com.monke.monkeybook.widget.refreshview.scroller;
 
 public interface FastScrollStateChangeListener {
-
     /**
      * Called when fast scrolling begins
      */

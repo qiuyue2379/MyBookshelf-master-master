@@ -140,6 +140,7 @@ public class BatteryView extends View {
         return mPower;
     }
 
+
     /**
      * 设置电池电量
      *

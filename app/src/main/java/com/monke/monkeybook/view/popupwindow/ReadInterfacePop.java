@@ -315,6 +315,7 @@ public class ReadInterfacePop extends PopupWindow {
                 break;
         }
         readBookControl.setTextDrawableIndex(index);
+
     }
 
     public interface OnChangeProListener {

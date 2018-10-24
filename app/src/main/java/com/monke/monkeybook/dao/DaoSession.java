@@ -32,7 +32,7 @@ import com.monke.monkeybook.dao.SearchHistoryBeanDao;
 
 /**
  * {@inheritDoc}
- * 
+ *
  * @see org.greenrobot.greendao.AbstractDaoSession
  */
 public class DaoSession extends AbstractDaoSession {
@@ -108,7 +108,7 @@ public class DaoSession extends AbstractDaoSession {
         registerDao(SearchBookBean.class, searchBookBeanDao);
         registerDao(SearchHistoryBean.class, searchHistoryBeanDao);
     }
-    
+
     public void clear() {
         bookInfoBeanDaoConfig.clearIdentityScope();
         bookmarkBeanDaoConfig.clearIdentityScope();

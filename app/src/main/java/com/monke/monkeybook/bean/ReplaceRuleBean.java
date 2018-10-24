@@ -42,7 +42,7 @@ public class ReplaceRuleBean implements Parcelable {
 
     @Generated(hash = 91525001)
     public ReplaceRuleBean(Long id, String replaceSummary, String regex, String replacement,
-            String useTo, Boolean enable, int serialNumber) {
+                           String useTo, Boolean enable, int serialNumber) {
         this.id = id;
         this.replaceSummary = replaceSummary;
         this.regex = regex;
