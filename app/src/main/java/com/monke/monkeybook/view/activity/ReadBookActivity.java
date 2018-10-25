@@ -1177,9 +1177,9 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
     }
 
     @Override
-    public void finishContent() {
-        if (mPageLoader != null && mPageLoader.getPageStatus() != PageLoader.STATUS_FINISH) {
-            mPageLoader.openChapter(mPresenter.getBookShelf().getDurChapterPage());
+    public void finishContent(int index) {
+        if (mPageLoader != null) {
+            mPageLoader.finishContent(index);
         }
     }
 
@@ -1344,11 +1344,11 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
             IntentFilter filter = new IntentFilter();
             filter.addAction(Intent.ACTION_TIME_TICK);
             filter.addAction(Intent.ACTION_BATTERY_CHANGED);
-            LocalBroadcastManager.getInstance(ReadBookActivity.this).registerReceiver(batInfoReceiver, filter);
+            ReadBookActivity.this.registerReceiver(batInfoReceiver, filter);
         }
 
         public void unregisterThis() {
-            LocalBroadcastManager.getInstance(ReadBookActivity.this).unregisterReceiver(batInfoReceiver);
+            ReadBookActivity.this.unregisterReceiver(batInfoReceiver);
             batInfoReceiver = null;
         }
     }

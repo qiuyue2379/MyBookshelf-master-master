@@ -266,7 +266,6 @@ public class ChapterListView extends FrameLayout {
         void animOut();
     }
 
-
     public interface OnItemClickListener {
         void itemClick(int index, int page, int tabPosition);
 

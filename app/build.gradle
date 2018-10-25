@@ -61,7 +61,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.gedoor.monkeybook.super"
+        applicationId "com.gedoor.monkeybook"
         minSdkVersion min_sdk_version
         targetSdkVersion target_sdk_version
         versionCode currentVersionCode

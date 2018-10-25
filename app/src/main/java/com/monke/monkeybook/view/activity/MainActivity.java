@@ -87,7 +87,6 @@ public class MainActivity extends BaseTabActivity<MainContract.Presenter> implem
     private ActionBarDrawerToggle mDrawerToggle;
     private MoProgressHUD moProgressHUD;
     private long exitTime = 0;
-    private boolean isRecreate;
     private boolean resumed = false;
 
     @Override

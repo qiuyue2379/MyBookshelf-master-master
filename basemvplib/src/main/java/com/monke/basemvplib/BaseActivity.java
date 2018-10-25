@@ -16,6 +16,7 @@ public abstract class BaseActivity<T extends IPresenter> extends RxAppCompatActi
     public final static String start_share_ele= "start_with_share_ele";
     protected Bundle savedInstanceState;
     protected T mPresenter;
+    protected boolean isRecreate;
     private Boolean startShareAnim = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,6 +108,13 @@ public abstract class BaseActivity<T extends IPresenter> extends RxAppCompatActi
         detachView();
         AppActivityManager.getInstance().remove(this);
     }
+
+    @Override
+    public void recreate() {
+        getIntent().putExtra("isRecreate", true);
+        super.recreate();
+    }
+
 
     ////////////////////////////////启动Activity转场动画/////////////////////////////////////////////
 
