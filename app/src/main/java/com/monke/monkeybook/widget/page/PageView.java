@@ -63,7 +63,7 @@ public class PageView extends View {
     private PageAnimation.OnPageChangeListener mPageAnimListener = new PageAnimation.OnPageChangeListener() {
         @Override
         public void changePage(PageAnimation.Direction direction) {
-//            mPageLoader.pagingEnd(direction);
+            mPageLoader.pagingEnd(direction);
         }
 
         @Override
@@ -77,11 +77,6 @@ public class PageView extends View {
         }
 
         @Override
-        public void pageCancel() {
-            PageView.this.pageCancel();
-        }
-
-        @Override
         public void autoNextPage() {
             autoNextPage();
         }
@@ -89,6 +84,21 @@ public class PageView extends View {
         @Override
         public void autoPrevPage() {
             autoPrevPage();
+        }
+
+        @Override
+        public void drawView(PageAnimation.Direction direction) {
+            switch (direction) {
+                case PRE:
+                    drawPrevPage();
+                    break;
+                case NEXT:
+                    drawNextPage();
+                    break;
+                default:
+                    drawCurPage();
+                    break;
+            }
         }
     };
 
@@ -227,12 +237,60 @@ public class PageView extends View {
         mPageAnim.startAnim();
     }
 
+
+    /**
+     * 绘制上一页
+     */
+    public void drawPrevPage() {
+        if (!isPrepare) return;
+        mPageLoader.drawPage(getBgBitmap(-1), getContentBitmap(-1), -1);
+    }
+
+    /**
+     * 绘制当前页。
+     */
+    public void drawCurPage() {
+        if (!isPrepare) return;
+
+        if (mPageLoader != null) {
+            mPageLoader.drawPage(getBgBitmap(0), getContentBitmap(0), 0);
+            if (mPageAnim instanceof HorizonPageAnim) {
+                mPageAnim.setChangePage(true);
+            }
+            invalidate();
+        }
+    }
+
+    /**
+     * 绘制下一页
+     */
+    public void drawNextPage() {
+        if (!isPrepare) return;
+
+        mPageLoader.drawPage(getBgBitmap(1), getContentBitmap(1), 1);
+    }
+
     @Override
     protected void onDraw(Canvas canvas) {
         //绘制动画
         if (mPageAnim != null) {
             mPageAnim.draw(canvas);
         }
+    }
+
+    @Override
+    public void computeScroll() {
+        //进行滑动
+        if (mPageAnim != null) {
+            mPageAnim.scrollAnim();
+            if (mPageAnim.isChangePage() && !mPageAnim.getScroller().computeScrollOffset()) {
+                mPageAnim.changePageEnd();
+                mPageLoader.pagingEnd(mPageAnim.getDirection());
+                mPageAnim.setDirection(PageAnimation.Direction.NONE);
+            }
+        }
+        super.computeScroll();
+
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -330,25 +388,6 @@ public class PageView extends View {
         }
     }
 
-    private void pageCancel() {
-        mPageLoader.pageCancel();
-    }
-
-    @Override
-    public void computeScroll() {
-        //进行滑动
-        if (mPageAnim != null) {
-            mPageAnim.scrollAnim();
-            if (mPageAnim.isChangePage() && !mPageAnim.getScroller().computeScrollOffset()) {
-                mPageAnim.changePageEnd();
-                mPageLoader.pagingEnd(mPageAnim.getDirection());
-                mPageAnim.setDirection(PageAnimation.Direction.NONE);
-            }
-        }
-        super.computeScroll();
-
-    }
-
     public void upPagePos(int chapterPos, int pagePos) {
         mChapterIndex = chapterPos;
         mPageIndex = pagePos;
@@ -378,39 +417,6 @@ public class PageView extends View {
         if (mPageAnim instanceof ScrollPageAnim) {
             ((ScrollPageAnim) mPageAnim).resetBitmap();
         }
-    }
-
-    /**
-     * 绘制上一页
-     */
-    public void drawPrevPage() {
-        if (!isPrepare) return;
-        mPageLoader.drawPage(getBgBitmap(-1), getContentBitmap(-1), -1);
-    }
-
-    /**
-     * 绘制当前页。
-     */
-    public void drawCurPage() {
-        if (!isPrepare) return;
-
-        if (mPageLoader != null) {
-            mPageLoader.drawPage(getBgBitmap(0), getContentBitmap(0), 0);
-            mPageAnim.setChangePage(true);
-            invalidate();
-        }
-    }
-
-    /**
-     * 绘制下一页
-     */
-    public void drawNextPage() {
-        if (!isPrepare) return;
-
-//        if (mPageAnim instanceof HorizonPageAnim) {
-//            ((HorizonPageAnim) mPageAnim).changePage();
-//        }
-        mPageLoader.drawPage(getBgBitmap(1), getContentBitmap(1), 1);
     }
 
     @Override
