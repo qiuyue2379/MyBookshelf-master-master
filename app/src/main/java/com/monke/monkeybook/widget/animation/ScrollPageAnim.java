@@ -38,11 +38,6 @@ public class ScrollPageAnim extends PageAnimation {
     private boolean isRefresh = true;
     //是否移动了
     private boolean isMove = false;
-    // 底部填充
-    private Iterator<BitmapView> downIt;
-    private Iterator<BitmapView> upIt;
-    //是否翻阅下一页。true表示翻到下一页，false表示上一页。
-    private boolean isNext = false;
     private boolean firstDown;
 
     public ScrollPageAnim(int w, int h, int marginWidth, int marginTop, int marginBottom, View view, OnPageChangeListener listener) {
@@ -98,7 +93,8 @@ public class ScrollPageAnim extends PageAnimation {
      */
     private void fillDown(int bottomEdge, int offset) {
 
-        downIt = mActiveViews.iterator();
+        // 底部填充
+        Iterator<BitmapView> downIt = mActiveViews.iterator();
         BitmapView view;
 
         // 进行删除
@@ -116,11 +112,6 @@ public class ScrollPageAnim extends PageAnimation {
                 mScrapViews.add(view);
                 // 从Active中移除
                 downIt.remove();
-                // 如果原先是从上加载，现在变成从下加载，则表示取消
-                if (mDirection == Direction.UP) {
-//                    mListener.pageCancel();
-                    mDirection = Direction.NONE;
-                }
             }
         }
 
@@ -142,11 +133,14 @@ public class ScrollPageAnim extends PageAnimation {
                 boolean hasNext = mListener.hasNext(); //如果不成功则无法滑动
 
                 if (hasNext) {
-                    mListener.drawView(Direction.NEXT);
                     if (firstDown) {
                         firstDown = false;
+                        mListener.drawBackground(0);
+                        mListener.drawContent(1);
                     } else {
                         mListener.changePage(Direction.NEXT);
+                        mListener.drawBackground(0);
+                        mListener.drawContent(1);
                     }
                 } else {// 如果不存在next,则进行还原
                     mNextBitmap = cancelBitmap;
@@ -187,7 +181,7 @@ public class ScrollPageAnim extends PageAnimation {
      */
     private void fillUp(int topEdge, int offset) {
         // 首先进行布局的调整
-        upIt = mActiveViews.iterator();
+        Iterator<BitmapView> upIt = mActiveViews.iterator();
         BitmapView view;
         while (upIt.hasNext()) {
             view = upIt.next();
@@ -204,12 +198,6 @@ public class ScrollPageAnim extends PageAnimation {
                 // 从Active中移除
                 upIt.remove();
 
-                // 如果原先是下，现在变成从上加载了，则表示取消加载
-
-                if (mDirection == Direction.DOWN) {
-//                    mListener.pageCancel();
-                    mDirection = Direction.NONE;
-                }
             }
         }
 
@@ -229,8 +217,9 @@ public class ScrollPageAnim extends PageAnimation {
                 firstDown = false;
                 boolean hasPrev = mListener.hasPrev(); // 如果不成功则无法滑动
                 if (hasPrev) {
-                    mListener.drawView(Direction.NONE);
                     mListener.changePage(Direction.PRE);
+                    mListener.drawBackground(0);
+                    mListener.drawContent(0);
                 } else { // 如果不存在next,则进行还原
                     mNextBitmap = cancelBitmap;
                     for (BitmapView activeView : mActiveViews) {
@@ -310,7 +299,8 @@ public class ScrollPageAnim extends PageAnimation {
                 break;
             case MotionEvent.ACTION_UP:
                 if (!isMove) {
-                    isNext = x > mScreenWidth / 2 || readBookControl.getClickAllNext();
+                    //是否翻阅下一页。true表示翻到下一页，false表示上一页。
+                    boolean isNext = x > mScreenWidth / 2 || readBookControl.getClickAllNext();
                     if (isNext) {
                         if (mListener != null) {
                             mListener.autoNextPage();
