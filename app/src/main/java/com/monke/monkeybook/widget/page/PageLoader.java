@@ -265,8 +265,6 @@ public abstract class PageLoader {
         mMarginRight = ScreenUtils.dpToPx(readBookControl.getPaddingRight());
 
         prepareDisplay(mDisplayWidth, mDisplayHeight);
-
-        skipToChapter(mCollBook.getDurChapter(), mCollBook.getDurChapterPage());
     }
 
     /**
