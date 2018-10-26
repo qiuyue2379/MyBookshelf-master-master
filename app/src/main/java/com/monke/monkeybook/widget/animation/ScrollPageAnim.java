@@ -18,7 +18,6 @@ import java.util.Iterator;
  * Alter by: zeroAngus
  * <p>
  * 问题:
- * 1. 向上翻页，重复的问题 (完成)
  * 2. 滑动卡顿的问题。原因:由于绘制的数据过多造成的卡顿问题。 (主要是文字绘制需要的时长比较多) 解决办法：做文字缓冲
  * 3. 弱网环境下，显示的问题
  */
@@ -122,8 +121,6 @@ public class ScrollPageAnim extends PageAnimation {
         while (realEdge < mViewHeight && mActiveViews.size() < 2) {
             // 从废弃的Views中获取一个
             view = mScrapViews.getFirst();
-            //擦除其Bitmap(重新创建会不会更好一点)
-//            eraseBitmap(view.bitmap,view.bitmap.getWidth(),view.bitmap.getHeight(),0,0);
             if (view == null) return;
 
             Bitmap cancelBitmap = mNextBitmap;
@@ -197,7 +194,6 @@ public class ScrollPageAnim extends PageAnimation {
                 mScrapViews.add(view);
                 // 从Active中移除
                 upIt.remove();
-
             }
         }
 
@@ -298,23 +294,19 @@ public class ScrollPageAnim extends PageAnimation {
                 mView.postInvalidate();
                 break;
             case MotionEvent.ACTION_UP:
+                isRunning = false;
                 if (!isMove) {
                     //是否翻阅下一页。true表示翻到下一页，false表示上一页。
                     boolean isNext = x > mScreenWidth / 2 || readBookControl.getClickAllNext();
                     if (isNext) {
-                        if (mListener != null) {
-                            mListener.autoNextPage();
-                        }
+                        startAnim(Direction.NEXT);
                     } else {
-                        if (mListener != null) {
-                            mListener.autoPrevPage();
-                        }
+                        startAnim(Direction.PRE);
                     }
+                } else {
+                    // 开启动画
+                    startAnim();
                 }
-
-                isRunning = false;
-                // 开启动画
-                startAnim();
                 // 删除检测器
                 mVelocity.recycle();
                 mVelocity = null;
@@ -356,21 +348,22 @@ public class ScrollPageAnim extends PageAnimation {
     @Override
     public synchronized void startAnim() {
         super.startAnim();
-        isRunning = true;
         //惯性滚动
         mScroller.fling(0, (int) mTouchY, 0, (int) mVelocity.getYVelocity(), 0, 0, Integer.MAX_VALUE * -1, Integer.MAX_VALUE);
     }
 
-    @Override
-    public void scrollAnim() {
-        if (mScroller.computeScrollOffset()) {
-            int x = mScroller.getCurrX();
-            int y = mScroller.getCurrY();
-            setTouchPoint(x, y);
-            if (mScroller.getFinalX() == x && mScroller.getFinalY() == y) {
-                isRunning = false;
-            }
-            mView.postInvalidate();
+    public void startAnim(Direction direction) {
+        setStartPoint(0, 0);
+        setTouchPoint(0, 0);
+        switch (direction) {
+            case NEXT:
+                super.startAnim();
+                mScroller.startScroll(0, 0, 0, -mViewHeight + 200, animationSpeed);
+                break;
+            case PRE:
+                super.startAnim();
+                mScroller.startScroll(0, 0, 0, mViewHeight - 200, animationSpeed);
+                break;
         }
     }
 
