@@ -41,15 +41,17 @@ public class ScrollPageAnim extends PageAnimation {
 
     public ScrollPageAnim(int w, int h, int marginWidth, int marginTop, int marginBottom, View view, OnPageChangeListener listener) {
         super(w, h, marginWidth, marginTop, marginBottom, view, listener);
-        // 创建两个BitmapView
         initWidget();
     }
 
+    /**
+     * 创建两个BitmapView
+     */
     private void initWidget() {
         mBgBitmap = Bitmap.createBitmap(mScreenWidth, mScreenHeight, Bitmap.Config.RGB_565);
 
         mScrapViews = new ArrayDeque<>(3);
-        for (int i = 0; i < 3; ++i) {
+        for (int i = 0; i < 2; ++i) {
             BitmapView view = new BitmapView();
             view.bitmap = Bitmap.createBitmap(mViewWidth, mViewHeight, Bitmap.Config.ARGB_4444);
             view.srcRect = new Rect(0, 0, mViewWidth, mViewHeight);
@@ -127,7 +129,7 @@ public class ScrollPageAnim extends PageAnimation {
             mNextBitmap = view.bitmap;
 
             if (!isRefresh) {
-                boolean hasNext = mListener.hasNext(); //如果不成功则无法滑动
+                boolean hasNext = mListener.hasNext(1); //如果不成功则无法滑动
 
                 if (hasNext) {
                     if (firstDown) {
@@ -141,6 +143,8 @@ public class ScrollPageAnim extends PageAnimation {
                     }
                 } else {// 如果不存在next,则进行还原
                     mNextBitmap = cancelBitmap;
+                    mListener.changePage(Direction.NEXT);
+                    mListener.drawBackground(0);
                     for (BitmapView activeView : mActiveViews) {
                         activeView.top = 0;
                         activeView.bottom = mViewHeight;
@@ -217,6 +221,7 @@ public class ScrollPageAnim extends PageAnimation {
                     mListener.drawBackground(0);
                     mListener.drawContent(0);
                 } else { // 如果不存在next,则进行还原
+                    firstDown = true;
                     mNextBitmap = cancelBitmap;
                     for (BitmapView activeView : mActiveViews) {
                         activeView.top = 0;
@@ -352,6 +357,9 @@ public class ScrollPageAnim extends PageAnimation {
         mScroller.fling(0, (int) mTouchY, 0, (int) mVelocity.getYVelocity(), 0, 0, Integer.MAX_VALUE * -1, Integer.MAX_VALUE);
     }
 
+    /**
+     * 翻页动画
+     */
     public void startAnim(Direction direction) {
         setStartPoint(0, 0);
         setTouchPoint(0, 0);
@@ -377,7 +385,7 @@ public class ScrollPageAnim extends PageAnimation {
 
     @Override
     public void changePageEnd() {
-
+        //无操作
     }
 
     @Override
