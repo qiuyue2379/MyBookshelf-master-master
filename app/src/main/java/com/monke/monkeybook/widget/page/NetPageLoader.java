@@ -78,10 +78,10 @@ public class NetPageLoader extends PageLoader {
     }
 
     /**
-     * @param chapterIndex
+     * 章节下载完成
      */
     public void finishContent(int chapterIndex) {
-        if (chapterIndex == mCurChapterPos || mCurChapter.getStatus() != STATUS_FINISH) {
+        if (chapterIndex == mCurChapterPos || mCurChapter.getStatus() != Enum.PageStatus.FINISH) {
             openChapter(mCurPagePos);
         }
         if (chapterIndex == mCurChapterPos - 1) {
@@ -118,16 +118,16 @@ public class NetPageLoader extends PageLoader {
 
     // 装载上一章节的内容
     @Override
-    boolean parsePrevChapter() {
+    void parsePrevChapter() {
         if (mPageChangeListener != null && mCurChapterPos >= 1 && shouldRequestChapter(mCurChapterPos - 1)) {
             mPageChangeListener.requestChapters(mCurChapterPos - 1);
         }
-        return super.parsePrevChapter();
+        super.parsePrevChapter();
     }
 
     // 装载当前章内容。
     @Override
-    boolean parseCurChapter() {
+    void parseCurChapter() {
         if (mPageChangeListener != null) {
             for (int i = mCurChapterPos - 1; i < mCurChapterPos + 5; i++) {
                 if (i < mCollBook.getChapterListSize() && shouldRequestChapter(i)) {
@@ -135,12 +135,12 @@ public class NetPageLoader extends PageLoader {
                 }
             }
         }
-        return super.parseCurChapter();
+        super.parseCurChapter();
     }
 
     // 装载下一章节的内容
     @Override
-    boolean parseNextChapter() {
+    void parseNextChapter() {
         if (mPageChangeListener != null) {
             for (int i = mCurChapterPos + 1; i < mCurChapterPos + 6; i++) {
                 if (i < mCollBook.getChapterListSize() && shouldRequestChapter(i)) {
@@ -148,14 +148,15 @@ public class NetPageLoader extends PageLoader {
                 }
             }
         }
-        return super.parseNextChapter();
+        super.parseNextChapter();
     }
 
     @Override
     TxtChapter dealLoadPageList(int chapterPos) {
-        if (!isNetWorkAvailable() && !hasChapterData(mCollBook.getChapterList(chapterPos)) && getPageStatus() == STATUS_LOADING) {
-            chapterError("网络连接不可用");
+        TxtChapter txtChapter = super.dealLoadPageList(chapterPos);
+        if (!isNetWorkAvailable() && !hasChapterData(mCollBook.getChapterList(chapterPos)) && txtChapter.getStatus() == Enum.PageStatus.LOADING) {
+            txtChapter.setMsg("网络连接不可用");
         }
-        return super.dealLoadPageList(chapterPos);
+        return txtChapter;
     }
 }

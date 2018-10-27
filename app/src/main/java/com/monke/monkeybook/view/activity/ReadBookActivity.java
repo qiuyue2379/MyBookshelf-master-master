@@ -53,6 +53,7 @@ import com.monke.monkeybook.view.popupwindow.ReadInterfacePop;
 import com.monke.monkeybook.widget.ChapterListView;
 import com.monke.monkeybook.widget.modialog.EditBookmarkView;
 import com.monke.monkeybook.widget.modialog.MoProgressHUD;
+import com.monke.monkeybook.widget.page.Enum;
 import com.monke.monkeybook.widget.page.NetPageLoader;
 import com.monke.monkeybook.widget.page.PageLoader;
 import com.monke.monkeybook.widget.page.PageView;
@@ -521,6 +522,13 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
                 moreSettingPop.dismiss();
                 ReadBookActivity.this.recreate();
             }
+
+            @Override
+            public void refreshPage() {
+                if (mPageLoader != null) {
+                    mPageLoader.refreshUi();
+                }
+            }
         });
     }
 
@@ -583,8 +591,8 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
                         hpbReadProgress.setMaxProgress(Math.max(0, count - 1));
                         hpbReadProgress.setDurProgress(0);
                         // 如果处于错误状态，那么就冻结使用
-                        if (mPageLoader.getPageStatus() == PageLoader.STATUS_LOADING
-                                || mPageLoader.getPageStatus() == PageLoader.STATUS_ERROR) {
+                        if (mPageLoader.getPageStatus() == Enum.PageStatus.LOADING
+                                || mPageLoader.getPageStatus() == Enum.PageStatus.ERROR) {
                             hpbReadProgress.setEnabled(false);
                         } else {
                             hpbReadProgress.setEnabled(true);
@@ -930,7 +938,7 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
         if (mPresenter.getBookShelf() != null) {
             moProgressHUD.showChangeSource(this, mPresenter.getBookShelf(), searchBookBean -> {
                 if (!Objects.equals(searchBookBean.getNoteUrl(), mPresenter.getBookShelf().getNoteUrl())) {
-                    mPageLoader.setStatus(PageLoader.STATUS_HY);
+                    mPageLoader.setStatus(Enum.PageStatus.CHANGE_SOURCE);
                     mPresenter.changeBookSource(searchBookBean);
                 }
             });
