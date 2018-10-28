@@ -33,7 +33,6 @@ import io.reactivex.schedulers.Schedulers;
 import static com.monke.monkeybook.utils.NetworkUtil.isNetWorkAvailable;
 
 /**
- * Created by newbiechen on 17-5-29.
  * 网络页面加载器
  */
 
@@ -43,6 +42,7 @@ public class NetPageLoader extends PageLoader {
     private ExecutorService executorService;
     private Scheduler scheduler;
     private Handler handler = new Handler();
+
     NetPageLoader(PageView pageView, BookShelfBean collBook) {
         super(pageView, collBook);
         executorService = Executors.newFixedThreadPool(10);
@@ -93,6 +93,7 @@ public class NetPageLoader extends PageLoader {
                     });
         }
     }
+
 
     @SuppressLint("DefaultLocale")
     public synchronized void loadContent(final int chapterIndex) {
@@ -235,7 +236,6 @@ public class NetPageLoader extends PageLoader {
         super.closeBook();
         executorService.shutdown();
     }
-
 
     @Override
     TxtChapter dealLoadPageList(int chapterPos) {

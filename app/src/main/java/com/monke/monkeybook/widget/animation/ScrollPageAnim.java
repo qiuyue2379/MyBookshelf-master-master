@@ -66,7 +66,9 @@ public class ScrollPageAnim extends PageAnimation {
         isRefresh = false;
     }
 
-    // 修改布局,填充内容
+    /**
+     * 修改布局,填充内容
+     */
     private void onLayout() {
         // 如果还没有开始加载，则从上到下进行绘制
         if (mActiveViews.size() == 0) {
@@ -142,9 +144,9 @@ public class ScrollPageAnim extends PageAnimation {
                         mListener.drawContent(1);
                     }
                 } else {// 如果不存在next,则进行还原
-                    mNextBitmap = cancelBitmap;
                     mListener.changePage(Direction.NEXT);
                     mListener.drawBackground(0);
+                    mNextBitmap = cancelBitmap;
                     for (BitmapView activeView : mActiveViews) {
                         activeView.top = 0;
                         activeView.bottom = mViewHeight;

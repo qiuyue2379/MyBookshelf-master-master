@@ -322,7 +322,7 @@ public class LocalPageLoader extends PageLoader {
             }
 
             // 加载并显示当前章节
-            openChapter(mCollBook.getDurChapterPage());
+            skipToChapter(mCollBook.getDurChapter(), mCollBook.getDurChapterPage());
 
         } else {
             // 通过RxJava异步处理分章事件
@@ -369,8 +369,7 @@ public class LocalPageLoader extends PageLoader {
         //从文件中获取数据
         byte[] content = getChapterContent(chapter);
         ByteArrayInputStream bais = new ByteArrayInputStream(content);
-        BufferedReader br = new BufferedReader(new InputStreamReader(bais, mCharset));
-        return br;
+        return new BufferedReader(new InputStreamReader(bais, mCharset));
     }
 
     @Override

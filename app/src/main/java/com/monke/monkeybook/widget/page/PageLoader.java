@@ -457,12 +457,7 @@ public abstract class PageLoader {
      */
     public void setStatus(Enum.PageStatus status) {
         mCurChapter.setStatus(status);
-        if (mPageMode != Enum.PageMode.SCROLL) {
-            upPage();
-        } else {
-            mPageView.resetScroll();
-            mPageView.drawPage(0);
-        }
+        reSetPage();
         mPageView.invalidate();
     }
 
@@ -518,42 +513,47 @@ public abstract class PageLoader {
      * 打开当前章节指定页
      */
     void openChapter(int pagePos) {
-        if (mCurChapter == null) {
-            mCurChapter = new TxtChapter(mCurChapterPos);
-        }
-
         mCurPagePos = pagePos;
         if (!mPageView.isPrepare()) {
             return;
         }
 
+        if (mCurChapter == null) {
+            mCurChapter = new TxtChapter(mCurChapterPos);
+            reSetPage();
+        }
+
         // 如果章节目录没有准备好
         if (!isChapterListPrepare) {
             mCurChapter.setStatus(Enum.PageStatus.LOADING);
-            mPageView.drawPage(0);
+            reSetPage();
             return;
         }
 
         // 如果获取到的章节目录为空
         if (mCollBook.getChapterList().isEmpty()) {
             mCurChapter.setStatus(Enum.PageStatus.CATEGORY_EMPTY);
-            mPageView.drawPage(0);
+            reSetPage();
             return;
         }
 
         parseCurChapter();
+        reSetPage();
+        mPageView.invalidate();
+        chapterChangeCallback();
+        pagingEnd(PageAnimation.Direction.NONE);
+    }
+
+    private void reSetPage() {
         if (mPageMode == Enum.PageMode.SCROLL) {
             mPageView.resetScroll();
             mPageView.drawPage(0);
         } else {
             upPage();
         }
-        mPageView.invalidate();
-        chapterChangeCallback();
-        pagingEnd(PageAnimation.Direction.NONE);
     }
 
-    public void upPage() {
+    private void upPage() {
         if (mPageMode != Enum.PageMode.SCROLL) {
             if (mCurPagePos > 0 || mCurChapter.getPosition() > 0) {
                 mPageView.drawPage(-1);
@@ -593,7 +593,7 @@ public abstract class PageLoader {
             case PRE:
                 if (mCurPagePos > 0) {
                     mCurPagePos = mCurPagePos - 1;
-                } else if (mCurChapterPos > 0){
+                } else if (mCurChapterPos > 0) {
                     mCurChapterPos = mCurChapterPos - 1;
                     mCurPagePos = mPreChapter.getPageSize() - 1;
                     mNextChapter = mCurChapter;
@@ -956,10 +956,10 @@ public abstract class PageLoader {
      */
     void parsePrevChapter() {
         final int prevChapterPos = mCurChapterPos - 1;
-        if ((mPreChapter == null || mPreChapter.getStatus() != Enum.PageStatus.FINISH)
-                && prevChapterPos >= 0) {
-            mPreChapter = dealLoadPageList(prevChapterPos);
+        if ((mPreChapter != null && mPreChapter.getStatus() == Enum.PageStatus.FINISH) || prevChapterPos < 0) {
+            return;
         }
+        mPreChapter = dealLoadPageList(prevChapterPos);
     }
 
     /**
@@ -967,15 +967,14 @@ public abstract class PageLoader {
      */
     void parseNextChapter() {
         final int nextChapterPos = mCurChapterPos + 1;
-        if ((mNextChapter == null || mNextChapter.getStatus() != Enum.PageStatus.FINISH)
-                && nextChapterPos < mCollBook.getChapterList().size()) {
-            mNextChapter = dealLoadPageList(nextChapterPos);
+        if ((mNextChapter != null && mNextChapter.getStatus() == Enum.PageStatus.FINISH) || nextChapterPos >= mCollBook.getChapterList().size()) {
+            return;
         }
+        mNextChapter = dealLoadPageList(nextChapterPos);
     }
 
-
     /**
-     * @param chapterPos　章节Pos
+     * @param chapterPos 　章节Pos
      * @return 章节数据
      */
     TxtChapter dealLoadPageList(int chapterPos) {
@@ -1187,21 +1186,18 @@ public abstract class PageLoader {
     public interface OnPageChangeListener {
         /**
          * 作用：章节切换的时候进行回调
-         *
          * @param pos:切换章节的序号
          */
         void onChapterChange(int pos);
 
         /**
          * 作用：章节目录加载完成时候回调
-         *
          * @param chapters：返回章节目录
          */
         void onCategoryFinish(List<ChapterListBean> chapters);
 
         /**
          * 作用：章节页码数量改变之后的回调。==> 字体大小的调整，或者是否关闭虚拟按钮功能都会改变页面的数量。
-         *
          * @param count:页面的数量
          */
         void onPageCountChange(int count);
