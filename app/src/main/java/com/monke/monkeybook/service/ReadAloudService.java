@@ -377,7 +377,6 @@ public class ReadAloudService extends Service {
         intent.setAction(actionStr);
         return PendingIntent.getService(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
     }
-
     /**
      * 更新通知
      */
@@ -423,7 +422,6 @@ public class ReadAloudService extends Service {
 
     @Override
     public void onDestroy() {
-        super.onDestroy();
         running = false;
         clearTTS();
         if (fadeTts) {
@@ -431,6 +429,7 @@ public class ReadAloudService extends Service {
         }
         unRegisterMediaButton();
         unregisterReceiver(broadcastReceiver);
+        super.onDestroy();
     }
 
     private void clearTTS() {
