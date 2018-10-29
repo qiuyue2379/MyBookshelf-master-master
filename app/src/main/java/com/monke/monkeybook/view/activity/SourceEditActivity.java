@@ -461,6 +461,7 @@ public class SourceEditActivity extends MBaseActivity<SourceEditContract.Present
                         .setMessage(getString(R.string.exit_no_save))
                         .setPositiveButton("是", (DialogInterface dialogInterface, int which) -> {
                         })
+                        .setPositiveButton("是", (DialogInterface dialogInterface, int which) -> { })
                         .setNegativeButton("否", (DialogInterface dialogInterface, int which) -> finish())
                         .show();
                 return true;
