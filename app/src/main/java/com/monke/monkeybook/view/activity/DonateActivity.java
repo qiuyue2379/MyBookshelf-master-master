@@ -103,7 +103,7 @@ public class DonateActivity extends MBaseActivity {
             ClipData clipData = ClipData.newPlainText(null, "537954522");
             if (clipboard != null) {
                 clipboard.setPrimaryClip(clipData);
-                Toast.makeText(this, "隐藏书源已开启\n红包码已复制\n支付宝首页搜索“537954522” 立即领红包", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "隐藏书源已开启\n红包码已复制\n支付宝首页搜索“546670331” 立即领红包", Toast.LENGTH_SHORT).show();
             }
             openZfb();
         });
