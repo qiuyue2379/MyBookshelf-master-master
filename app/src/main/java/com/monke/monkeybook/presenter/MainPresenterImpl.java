@@ -174,6 +174,7 @@ public class MainPresenterImpl extends BasePresenterImpl<MainContract.View> impl
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
     @Override
     public void attachView(@NonNull IView iView) {
         super.attachView(iView);
@@ -194,8 +195,8 @@ public class MainPresenterImpl extends BasePresenterImpl<MainContract.View> impl
     public void updatePx(Boolean px) {
         mView.recreate();
     }
-    @Subscribe(thread = EventThread.MAIN_THREAD, tags = {@Tag(RxBusTag.RESET_VOLUME)})
 
+    @Subscribe(thread = EventThread.MAIN_THREAD, tags = {@Tag(RxBusTag.RESET_VOLUME)})
     public void resetVolume(int stream) {
         if (!MApplication.getInstance().getConfigPreferences().getBoolean("fadeTTS", false))
             return;

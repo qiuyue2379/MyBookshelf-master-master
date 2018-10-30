@@ -85,10 +85,10 @@ public class DonateActivity extends MBaseActivity {
     @Override
     protected void bindEvent() {
         vwZfbTz.setOnClickListener(view -> Donate.aliDonate(this));
-        vwZfbHb.setOnClickListener(view -> openIntent(Intent.ACTION_VIEW, "https://gedoor.github.io/MyBookshelf/zfbhbrwm.png"));
-        vwZfbRwm.setOnClickListener(view -> openIntent(Intent.ACTION_VIEW, "https://gedoor.github.io/MyBookshelf/zfbskrwm.jpg"));
-        vwWxRwm.setOnClickListener(view -> openIntent(Intent.ACTION_VIEW, "https://gedoor.github.io/MyBookshelf/wxskrwm.jpg"));
-        vwQqRwm.setOnClickListener(view -> openIntent(Intent.ACTION_VIEW, "https://gedoor.github.io/MyBookshelf/qqskrwm.jpg"));
+        vwZfbHb.setOnClickListener(view -> openIntent(Intent.ACTION_VIEW, "https://qiuyue2379.github.io/zfbhbrwm1.jpg"));
+        vwZfbRwm.setOnClickListener(view -> openIntent(Intent.ACTION_VIEW, "https://qiuyue2379.github.io/zfbskrwm0.jpg"));
+        vwWxRwm.setOnClickListener(view -> openIntent(Intent.ACTION_VIEW, "https://qiuyue2379.github.io/wxskrwm.jpg"));
+        vwQqRwm.setOnClickListener(view -> openIntent(Intent.ACTION_VIEW, "https://qiuyue2379.github.io/qqskrwm.jpg"));
         vwZfbHbKl.setOnClickListener(view -> {
             ClipboardManager clipboard = (ClipboardManager) this.getSystemService(Context.CLIPBOARD_SERVICE);
             ClipData clipData = ClipData.newPlainText(null, "支付宝红包再升级，红包种类更多，金额更大！人人可领，天天可领！长按复制此消息，打开支付宝领红包！4ZEEL3226k");

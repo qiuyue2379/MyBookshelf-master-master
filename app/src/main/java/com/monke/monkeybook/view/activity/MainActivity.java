@@ -179,7 +179,7 @@ public class MainActivity extends BaseTabActivity<MainContract.Presenter> implem
                     View tabView = (View) tab.getCustomView().getParent();
                     tabView.setTag(i);
                     //设置第一个Item的点击事件(当下标为0时触发)
-                    if (i == 0){
+                    if (i == 0) {
                         tabView.setOnClickListener(view -> {
                             if (tabView.isSelected()) {
                                 //切换书架

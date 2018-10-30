@@ -33,9 +33,9 @@ import io.reactivex.schedulers.Schedulers;
  */
 
 public class BookSourceManager extends BaseModelImpl {
+    public static List<String> groupList = new ArrayList<>();
     private static List<BookSourceBean> selectedBookSource;
     private static List<BookSourceBean> allBookSource;
-    public static List<String> groupList = new ArrayList<>();
 
     public static BookSourceManager getInstance() {
         return new BookSourceManager();
@@ -55,6 +55,7 @@ public class BookSourceManager extends BaseModelImpl {
     public static List<BookSourceBean> getAllBookSource() {
         if (allBookSource == null) {
             allBookSource = DbHelper.getInstance().getmDaoSession().getBookSourceBeanDao().queryBuilder()
+                    .orderRaw("-WEIGHT ASC")
                     .orderAsc(BookSourceBeanDao.Properties.SerialNumber)
                     .list();
             upGroupList();
@@ -64,6 +65,7 @@ public class BookSourceManager extends BaseModelImpl {
 
     public static void refreshBookSource() {
         allBookSource = DbHelper.getInstance().getmDaoSession().getBookSourceBeanDao().queryBuilder()
+                .orderRaw("-WEIGHT ASC")
                 .orderAsc(BookSourceBeanDao.Properties.SerialNumber)
                 .list();
         selectedBookSource = DbHelper.getInstance().getmDaoSession().getBookSourceBeanDao().queryBuilder()
@@ -100,14 +102,17 @@ public class BookSourceManager extends BaseModelImpl {
 
     private synchronized static void upGroupList() {
         groupList.clear();
-        for (BookSourceBean bookSourceBean : allBookSource) {
-            if (!TextUtils.isEmpty(bookSourceBean.getBookSourceGroup()) && !groupList.contains(bookSourceBean.getBookSourceGroup())) {
-                for (String item: bookSourceBean.getBookSourceGroup().split("\\s*[,;，；]\\s*")) {
-                    if (TextUtils.isEmpty(item) || groupList.contains(item)) continue;
-                    groupList.add(item);
-                }
+        String sql = "SELECT DISTINCT " + BookSourceBeanDao.Properties.BookSourceGroup.columnName + " FROM " + BookSourceBeanDao.TABLENAME;
+        Cursor cursor = DbHelper.getInstance().getmDaoSession().getDatabase().rawQuery(sql, null);
+        if (!cursor.moveToFirst()) return;
+        do {
+            String group = cursor.getString(0);
+            if (TextUtils.isEmpty(group) || TextUtils.isEmpty(group.trim())) continue;
+            for (String item : group.split("\\s*[,;，；]\\s*")) {
+                if (TextUtils.isEmpty(item) || groupList.contains(item)) continue;
+                groupList.add(item);
             }
-        }
+        } while (cursor.moveToNext());
         Collections.sort(groupList);
         RxBus.get().post(RxBusTag.UPDATE_BOOK_SOURCE, new Object());
     }
@@ -177,8 +182,7 @@ public class BookSourceManager extends BaseModelImpl {
                             e.printStackTrace();
                         }
                     })
-                    .setNegativeButton(R.string.cancel, (dialogInterface, i) -> {
-                    })
+                    .setNegativeButton(R.string.cancel, (dialogInterface, i) -> { })
                     .show();
         }
     }
