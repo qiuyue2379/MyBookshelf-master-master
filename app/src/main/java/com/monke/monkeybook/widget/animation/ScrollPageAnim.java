@@ -171,6 +171,7 @@ public class ScrollPageAnim extends PageAnimation {
             view.destRect.bottom = view.bottom;
 
             realEdge += view.bitmap.getHeight();
+            mListener.drawContent(1);
         }
     }
 

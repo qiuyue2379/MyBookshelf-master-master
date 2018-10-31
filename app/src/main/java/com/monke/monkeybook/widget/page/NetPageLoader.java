@@ -56,7 +56,6 @@ public class NetPageLoader extends PageLoader {
                 mCollBook.getBookInfoBean().setChapterList(BookshelfHelp.getChapterList(mCollBook.getNoteUrl()));
                 mCollBook.getBookInfoBean().setBookmarkList(BookshelfHelp.getBookmarkList(mCollBook.getBookInfoBean().getName()));
             }
-
             e.onNext(mCollBook.getChapterList().size() > 0);
             e.onComplete();
         }).subscribeOn(Schedulers.io())
@@ -67,6 +66,7 @@ public class NetPageLoader extends PageLoader {
                     public void onNext(Boolean aBoolean) {
                         if (aBoolean) {
                             isChapterListPrepare = true;
+
                             // 目录加载完成，执行回调操作。
                             if (mPageChangeListener != null) {
                                 mPageChangeListener.onCategoryFinish(mCollBook.getChapterList());
