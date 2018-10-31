@@ -69,8 +69,8 @@ public class ReadBookPresenterImpl extends BasePresenterImpl<ReadBookContract.Vi
             loadBook(intent);
         } else {
             mView.openBookFromOther();
+            mView.showMenu();
         }
-        mView.showMenu();
     }
 
     private void loadBook(Intent intent) {
@@ -89,6 +89,10 @@ public class ReadBookPresenterImpl extends BasePresenterImpl<ReadBookContract.Vi
                     bookShelf = beans.get(0);
                 }
             }
+            if (bookShelf != null) {
+                bookShelf.getBookInfoBean().setChapterList(BookshelfHelp.getChapterList(bookShelf.getNoteUrl()));
+                bookShelf.getBookInfoBean().setBookmarkList(BookshelfHelp.getBookmarkList(bookShelf.getBookInfoBean().getName()));
+            }
             e.onNext(bookShelf);
             e.onComplete();
         }).subscribeOn(Schedulers.io())
@@ -102,6 +106,7 @@ public class ReadBookPresenterImpl extends BasePresenterImpl<ReadBookContract.Vi
                         } else {
                             mView.setHpbReadProgressMax(0);
                             mView.startLoadingBook();
+                            mView.showMenu();
                             checkInShelf();
                         }
                     }

@@ -539,7 +539,7 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
      * 加载阅读页面
      */
     private void initPageView() {
-        mPageLoader = pageView.getPageLoader(this, mPresenter.getBookShelf());
+        mPageLoader = pageView.getPageLoader(this);
         mPageLoader.updateBattery(BatteryUtil.getLevel(this));
         mPageLoader.setOnPageChangeListener(
                 new PageLoader.OnPageChangeListener() {
@@ -975,6 +975,11 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
         flMenu.setVisibility(View.VISIBLE);
         llMenuTop.startAnimation(menuTopIn);
         llMenuBottom.startAnimation(menuBottomIn);
+        hideSnackBar();
+    }
+
+    public BookShelfBean getBook() {
+        return mPresenter.getBookShelf();
     }
 
     /**

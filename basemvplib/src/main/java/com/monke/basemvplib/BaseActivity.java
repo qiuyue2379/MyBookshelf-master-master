@@ -23,6 +23,7 @@ public abstract class BaseActivity<T extends IPresenter> extends RxAppCompatActi
         super.onCreate(savedInstanceState);
         this.savedInstanceState = savedInstanceState;
         if(getIntent()!=null){
+            isRecreate = getIntent().getBooleanExtra("isRecreate", false);
             startShareAnim = getIntent().getBooleanExtra(start_share_ele,false);
         }
         AppActivityManager.getInstance().add(this);
@@ -114,7 +115,6 @@ public abstract class BaseActivity<T extends IPresenter> extends RxAppCompatActi
         getIntent().putExtra("isRecreate", true);
         super.recreate();
     }
-
 
     ////////////////////////////////启动Activity转场动画/////////////////////////////////////////////
 
