@@ -6,13 +6,13 @@
 - http://www.hostfans.cn/
 
 ### 书源制作说明
-- https://gedoor.github.io/MyBookshelf/sourcerule.html
+- https://qiuyue2379.github.io/sourcerule.html
 
 ### 下载最新版本
-- https://github.com/gedoor/MyBookshelf/releases/latest
+- https://github.com/qiuyue2379/MyBookshelf-master-master/releases/latest
 
 ### 免责声明
-- https://gedoor.github.io/MyBookshelf/disclaimer.html
+- https://qiuyue2379.github.io/disclaimer.html
 
 ### 软件截图
-![image](https://gedoor.github.io/MyBookshelf/image/mybookshelf.jpg)
+![image](https://qiuyue2379.github.io/image/mybookshelf.jpg)
