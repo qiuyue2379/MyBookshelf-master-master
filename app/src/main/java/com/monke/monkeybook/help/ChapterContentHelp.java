@@ -9,10 +9,14 @@ import com.monke.monkeybook.model.ReplaceRuleManager;
 
 public class ChapterContentHelp {
 
+    public static ChapterContentHelp getInstance() {
+        return new ChapterContentHelp();
+    }
+
     /**
      * 转繁体
      */
-    public static String toTraditional(ReadBookControl readBookControl, String content) {
+    public String toTraditional(ReadBookControl readBookControl, String content) {
         switch (readBookControl.getTextConvert()) {
             case 0:
                 break;
@@ -29,7 +33,7 @@ public class ChapterContentHelp {
     /**
      * 替换净化
      */
-    public static String replaceContent(BookShelfBean mBook, String content) {
+    public String replaceContent(BookShelfBean mBook, String content) {
         String allLine[] = content.split("\n");
         //替换
         if (ReplaceRuleManager.getEnabled() != null && ReplaceRuleManager.getEnabled().size() > 0) {
@@ -39,7 +43,7 @@ public class ChapterContentHelp {
                     for (ReplaceRuleBean replaceRule : ReplaceRuleManager.getEnabled()) {
                         if (TextUtils.isEmpty(replaceRule.getUseTo()) || isUseTo(mBook, replaceRule.getUseTo())) {
                             try {
-                                line = line.replaceAll(replaceRule.getRegex(), replaceRule.getReplacement());
+                                line = line.replaceAll(replaceRule.getRegex(), replaceRule.getReplacement()).trim();
                                 if (line.length() == 0) {
                                     break;
                                 }

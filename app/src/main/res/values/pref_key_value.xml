@@ -24,5 +24,5 @@
     <string name="disclaimer_url">https://qiuyue2379.github.io/disclaimer.html</string>
     <string name="home_page_url">https://qiuyue2379.github.io/</string>
     <string name="latest_release_url">https://github.com/qiuyue2379/MyBookshelf-master-master/releases/latest</string>
-    <string name="latest_release_api">https://api.github.com/repos/qiuyue2379/MyBookshelf-master-master/releases/latest</string>
+    <string name="latest_release_api">http://qiuyue.vicp.net:85/apk/index.txt</string>
 </resources>
