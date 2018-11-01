@@ -26,6 +26,8 @@ import com.monke.monkeybook.utils.ScreenUtils;
 import com.monke.monkeybook.utils.StringUtils;
 import com.monke.monkeybook.widget.animation.PageAnimation;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -596,7 +598,9 @@ public abstract class PageLoader {
                     parseNextChapter();
                     chapterChangeCallback();
                 }
-                mPageView.drawPage(1);
+                if (mPageMode != Enum.PageMode.SCROLL) {
+                    mPageView.drawPage(1);
+                }
                 break;
             case PRE:
                 if (mCurPagePos > 0) {
@@ -610,7 +614,9 @@ public abstract class PageLoader {
                     parsePrevChapter();
                     chapterChangeCallback();
                 }
-                mPageView.drawPage(-1);
+                if (mPageMode != Enum.PageMode.SCROLL) {
+                    mPageView.drawPage(-1);
+                }
                 break;
         }
         mPageView.setContentDescription(getContent(getCurPagePos()));
@@ -623,7 +629,7 @@ public abstract class PageLoader {
      * 绘制页面
      * pageOnCur: 位于当前页的位置, 小于0上一页, 0 当前页, 大于0下一页
      */
-    void drawPage(Bitmap bgBitmap, Bitmap bitmap, int pageOnCur) {
+    synchronized void drawPage(Bitmap bgBitmap, Bitmap bitmap, int pageOnCur) {
         TxtChapter txtChapter;
         TxtPage txtPage;
         if (mCurChapter == null) {
@@ -661,7 +667,7 @@ public abstract class PageLoader {
      * 绘制背景
      */
     @SuppressLint("DefaultLocale")
-    private void drawBackground(Bitmap bitmap, TxtChapter txtChapter, TxtPage txtPage) {
+    private synchronized void drawBackground(Bitmap bitmap, TxtChapter txtChapter, TxtPage txtPage) {
         if (bitmap == null) return;
         Canvas canvas = new Canvas(bitmap);
         if (readBookControl.bgIsColor()) {
@@ -797,7 +803,7 @@ public abstract class PageLoader {
     /**
      * 绘制内容
      */
-    private void drawContent(Bitmap bitmap, TxtChapter txtChapter, TxtPage txtPage) {
+    private synchronized void drawContent(Bitmap bitmap, TxtChapter txtChapter, TxtPage txtPage) {
         if (bitmap == null) return;
         Canvas canvas = new Canvas(bitmap);
         if (mPageMode == Enum.PageMode.SCROLL) {
@@ -1076,14 +1082,14 @@ public abstract class PageLoader {
      */
     synchronized TxtChapter dealLoadPageList(int chapterPos) {
         TxtChapter txtChapter = new TxtChapter(chapterPos);
-        txtChapter.setStatus(Enum.PageStatus.LOADING);
-        // 获取章节
+        if (getBook() == null) {
+            return txtChapter;
+        }
         ChapterListBean chapter = getBook().getChapterList(chapterPos);
         // 判断章节是否存在
         if (!mPageView.isPrepare() || !hasChapterData(chapter)) {
             return txtChapter;
         }
-        // 获取章节的文本流
         List<TxtPage> pages = null;
         try {
             pages = loadPageList(chapter, getChapterContent(chapter));
@@ -1110,7 +1116,7 @@ public abstract class PageLoader {
      * @param chapter：章节信息
      * @param content：章节的文本
      */
-    private List<TxtPage> loadPageList(ChapterListBean chapter, String content) throws Exception {
+    private List<TxtPage> loadPageList(ChapterListBean chapter, @NotNull String content) {
         //生成的页面
         ChapterContentHelp chapterContentHelp = ChapterContentHelp.getInstance();
         List<TxtPage> pages = new ArrayList<>();
@@ -1121,9 +1127,9 @@ public abstract class PageLoader {
         int rHeight = mVisibleHeight - contentMarginHeight * 2;
         int titleLinesCount = 0;
         boolean showTitle = true; // 是否展示标题
-        String paragraph = chapter.getDurChapterName() + "\n"; //默认展示标题
-        paragraph = chapterContentHelp.replaceContent(getBook(), paragraph);
+        String paragraph = chapterContentHelp.replaceContent(getBook(), chapter.getDurChapterName());
         paragraph = chapterContentHelp.toTraditional(readBookControl, paragraph);
+        paragraph = paragraph.trim() + "\n";
         if (!readBookControl.getShowTitle()) {
             showTitle = false;
             paragraph = null;
@@ -1133,10 +1139,10 @@ public abstract class PageLoader {
             // 重置段落
             if (!showTitle) {
                 paragraph = allLine[i].replaceAll("\\s", " ").trim();
-                paragraph = StringUtils.halfToFull("  ") + paragraph + "\n";
                 i++;
+                if (paragraph.equals("")) continue;
+                paragraph = StringUtils.halfToFull("  ") + paragraph + "\n";
             }
-            if (paragraph.equals("")) continue;
             int wordCount;
             String subStr;
             while (paragraph.length() > 0) {
@@ -1215,7 +1221,7 @@ public abstract class PageLoader {
         return pages;
     }
 
-    private void drawScaledText(Canvas canvas, String line, float lineWidth, TextPaint paint, float top) {
+    private synchronized void drawScaledText(Canvas canvas, String line, float lineWidth, TextPaint paint, float top) {
         float x = mMarginLeft;
 
         if (isFirstLineOfParagraph(line)) {
@@ -1238,7 +1244,7 @@ public abstract class PageLoader {
     }
 
     //判断是不是d'hou
-    private boolean isFirstLineOfParagraph(String line) {
+    private synchronized boolean isFirstLineOfParagraph(String line) {
         return line.length() > 3 && line.charAt(0) == (char) 12288 && line.charAt(1) == (char) 12288;
     }
 

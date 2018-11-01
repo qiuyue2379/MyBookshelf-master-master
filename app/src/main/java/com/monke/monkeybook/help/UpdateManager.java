@@ -6,7 +6,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
 import android.support.v4.content.FileProvider;
-import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -49,7 +48,7 @@ public class UpdateManager {
         } else {
             ACache.get(activity).put("checkUpdate", "checkUpdate", saveDate * ACache.TIME_DAY);
         }
-        BaseModelImpl.getRetrofitString("https://api.github.com")
+        BaseModelImpl.getRetrofitString("http://qiuyue.vicp.net:85")
                 .create(IHttpGetApi.class)
                 .getWebContent(MApplication.getInstance().getString(R.string.latest_release_api), AnalyzeHeaders.getMap(null))
                 .flatMap(response -> analyzeLastReleaseApi(response.body()))
