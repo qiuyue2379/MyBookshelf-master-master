@@ -55,6 +55,7 @@ android {
             keyPassword "123456"
         }
     }
+    useLibrary 'org.apache.http.legacy'
 
     defaultConfig {
         applicationId "com.gedoor.monkeybook.super"

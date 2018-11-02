@@ -1083,7 +1083,7 @@ public abstract class PageLoader {
         float x = mMarginLeft;
 
         if (isFirstLineOfParagraph(line)) {
-            String blanks = StringUtils.halfToFull("  ");
+            String blanks = "\u3000\u3000";
             canvas.drawText(blanks, x, top, paint);
             float bw = StaticLayout.getDesiredWidth(blanks, paint);
             x += bw;
@@ -1116,6 +1116,8 @@ public abstract class PageLoader {
             mPageChangeListener.onPageCountChange(mCurChapter != null ? mCurChapter.getPageSize() : 0);
         }
     }
+
+    public abstract void updateChapter();
 
     /**
      * 根据当前状态，决定是否能够翻页

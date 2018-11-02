@@ -42,7 +42,6 @@ public class UpdateService extends Service {
     private boolean interceptFlag = false;
     private Disposable disposableDown;
     private int count = 0;
-    private int progress;// 当前进度
 
     public static void startThis(Context context, UpdateInfoBean updateInfoBean) {
         Intent intent = new Intent(context, UpdateService.class);
@@ -165,7 +164,7 @@ public class UpdateService extends Service {
                 do {
                     numread = is.read(buf);
                     count += numread;
-                    progress = (int) (((float) count / length) * 100);
+                    int progress = (int) (((float) count / length) * 100);
                     //更新进度
                     e.onNext(progress);
                     if (numread <= 0) {

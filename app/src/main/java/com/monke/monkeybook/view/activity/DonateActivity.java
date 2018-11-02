@@ -45,8 +45,6 @@ public class DonateActivity extends MBaseActivity {
     LinearLayout llContent;
     @BindView(R.id.vw_qq_rwm)
     CardView vwQqRwm;
-    @BindView(R.id.vw_zfb_hb_kl)
-    CardView vwZfbHbKl;
     @BindView(R.id.vw_zfb_hb_ssm)
     CardView vwZfbHbSsm;
 
@@ -89,18 +87,9 @@ public class DonateActivity extends MBaseActivity {
         vwZfbRwm.setOnClickListener(view -> openIntent(Intent.ACTION_VIEW, "https://qiuyue2379.github.io/zfbskrwm0.jpg"));
         vwWxRwm.setOnClickListener(view -> openIntent(Intent.ACTION_VIEW, "https://qiuyue2379.github.io/wxskrwm.jpg"));
         vwQqRwm.setOnClickListener(view -> openIntent(Intent.ACTION_VIEW, "https://qiuyue2379.github.io/qqskrwm.jpg"));
-        vwZfbHbKl.setOnClickListener(view -> {
-            ClipboardManager clipboard = (ClipboardManager) this.getSystemService(Context.CLIPBOARD_SERVICE);
-            ClipData clipData = ClipData.newPlainText(null, "支付宝红包再升级，红包种类更多，金额更大！人人可领，天天可领！长按复制此消息，打开支付宝领红包！4ZEEL3226k");
-            if (clipboard != null) {
-                clipboard.setPrimaryClip(clipData);
-                Toast.makeText(this, "隐藏书源已开启", Toast.LENGTH_SHORT).show();
-            }
-            openZfb();
-        });
         vwZfbHbSsm.setOnClickListener(view -> {
             ClipboardManager clipboard = (ClipboardManager) this.getSystemService(Context.CLIPBOARD_SERVICE);
-            ClipData clipData = ClipData.newPlainText(null, "537954522");
+            ClipData clipData = ClipData.newPlainText(null, "546670331");
             if (clipboard != null) {
                 clipboard.setPrimaryClip(clipData);
                 Toast.makeText(this, "隐藏书源已开启\n红包码已复制\n支付宝首页搜索“546670331” 立即领红包", Toast.LENGTH_SHORT).show();

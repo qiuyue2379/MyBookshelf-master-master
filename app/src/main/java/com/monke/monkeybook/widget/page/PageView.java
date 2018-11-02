@@ -6,7 +6,6 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.RectF;
-import android.os.AsyncTask;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
@@ -76,12 +75,12 @@ public class PageView extends View {
 
         @Override
         public void drawBackground(int pos) {
-            AsyncTask.execute(() -> PageView.this.drawBackground(pos));
+            PageView.this.drawBackground(pos);
         }
 
         @Override
         public void drawContent(int pos) {
-            AsyncTask.execute(() -> PageView.this.drawContent(pos));
+            PageView.this.drawContent(pos);
         }
 
     };

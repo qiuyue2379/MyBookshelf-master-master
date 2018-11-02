@@ -66,6 +66,7 @@ public class AboutActivity extends MBaseActivity {
     @BindView(R.id.vw_faq)
     CardView vwFaq;
 
+    private UpdateManager mUpdateManager;
     private MoProgressHUD moProgressHUD;
     private String qq = "365650856";
 
@@ -120,6 +121,11 @@ public class AboutActivity extends MBaseActivity {
         vwDonate.setOnClickListener(view -> DonateActivity.startThis(this));
         vwDisclaimer.setOnClickListener(view -> moProgressHUD.showAssetMarkdown("disclaimer.md"));
         vwUpdate.setOnClickListener(view -> UpdateManager.getInstance(this).checkUpdate(true));
+       // vwUpdate.setOnClickListener(view -> {
+            //这里来检测版本是否需要更新
+           // mUpdateManager = new UpdateManager(this);
+           // mUpdateManager.checkUpdate();
+       // });
         vwQq.setOnClickListener(view -> {
             ClipboardManager clipboard = (ClipboardManager) this.getSystemService(Context.CLIPBOARD_SERVICE);
             ClipData clipData = ClipData.newPlainText(null, qq);
