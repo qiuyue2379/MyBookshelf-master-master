@@ -264,6 +264,7 @@
     <string name="faq">常见问题</string>
     <string name="pt_show_all_find">显示所有发现</string>
     <string name="ps_show_all_find">关闭则只显示勾选源的发现</string>
+    <string name="update_chapter">更新目录</string>
 
     <string name="soft_update_no">已经是最新版本</string>
     <string name="soft_update_title">软件更新</string>

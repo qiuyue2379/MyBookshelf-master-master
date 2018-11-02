@@ -58,8 +58,6 @@ import com.monke.monkeybook.widget.page.PageView;
 import com.monke.mprogressbar.MHorProgressBar;
 import com.monke.mprogressbar.OnProgressListener;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Objects;
 
@@ -163,9 +161,6 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
     private MoProgressHUD moProgressHUD;
     private ThisBatInfoReceiver batInfoReceiver;
     private ReadBookControl readBookControl = ReadBookControl.getInstance();
-
-    @SuppressLint("SimpleDateFormat")
-    private DateFormat dfTime = new SimpleDateFormat("HH:mm");
 
     private Boolean showCheckPermission = false;
     private boolean autoPage = false;
@@ -861,6 +856,11 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
             case R.id.action_book_info:
                 BookInfoActivity.startThis(this, mPresenter.getBookShelf().getNoteUrl());
                 break;
+            case R.id.update_chapter_list:
+                if (mPageLoader != null) {
+                    mPageLoader.updateChapter();
+                }
+                break;
             case android.R.id.home:
                 finish();
                 break;
@@ -1119,7 +1119,7 @@ public class ReadBookActivity extends MBaseActivity<ReadBookContract.Presenter> 
                         mPageLoader.skipToPrePage();
                     }
                     return true;
-                } else if (keyCode == 32) {
+                } else if (keyCode == KeyEvent.KEYCODE_SPACE) {
                     if (mPageLoader != null) {
                         mPageLoader.skipToNextPage();
                     }
