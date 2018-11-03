@@ -21,6 +21,7 @@ import com.monke.monkeybook.help.BookshelfHelp;
 import com.monke.monkeybook.help.ChapterContentHelp;
 import com.monke.monkeybook.help.Constant;
 import com.monke.monkeybook.help.ReadBookControl;
+import com.monke.monkeybook.model.ReplaceRuleManager;
 import com.monke.monkeybook.utils.RxUtils;
 import com.monke.monkeybook.utils.ScreenUtils;
 import com.monke.monkeybook.utils.StringUtils;
@@ -364,8 +365,8 @@ public abstract class PageLoader {
         if (!isChapterListPrepare) {
             return;
         }
-        mCurPagePos = pos;
-        openChapter(mCurPagePos);
+        // mCurPagePos = pos;
+        openChapter(pos);
     }
 
     /**
@@ -417,6 +418,9 @@ public abstract class PageLoader {
      * 更新电量
      */
     public boolean updateBattery(int level) {
+        if (mBatteryLevel == level) {
+            return true;
+        }
         mBatteryLevel = level;
         if (!mPageView.isRunning() && readBookControl.getHideStatusBar() && readBookControl.getShowTimeBattery()) {
             if (mPageMode == Enum.PageMode.SCROLL) {
@@ -427,7 +431,7 @@ public abstract class PageLoader {
             mPageView.invalidate();
             return true;
         }
-        return false;
+        return true;
     }
 
     /**
@@ -520,7 +524,6 @@ public abstract class PageLoader {
         if (mCurChapter == null) {
             mCurChapter = new TxtChapter(mCurChapterPos);
             reSetPage();
-            mPageView.invalidate();
         } else if (mCurChapter.getStatus() == Enum.PageStatus.FINISH) {
             reSetPage();
             mPageView.invalidate();
@@ -532,6 +535,7 @@ public abstract class PageLoader {
         if (!isChapterListPrepare) {
             mCurChapter.setStatus(Enum.PageStatus.LOADING);
             reSetPage();
+            mPageView.invalidate();
             return;
         }
 
@@ -539,6 +543,7 @@ public abstract class PageLoader {
         if (getBook().getChapterList().isEmpty()) {
             mCurChapter.setStatus(Enum.PageStatus.CATEGORY_EMPTY);
             reSetPage();
+            mPageView.invalidate();
             return;
         }
 
@@ -556,13 +561,13 @@ public abstract class PageLoader {
 
     private void upPage() {
         if (mPageMode != Enum.PageMode.SCROLL) {
+            mPageView.drawPage(0);
             if (mCurPagePos > 0 || mCurChapter.getPosition() > 0) {
                 mPageView.drawPage(-1);
             }
             if (mCurPagePos < mCurChapter.getPageSize() - 1 || mCurChapter.getPosition() < getBook().getChapterList().size() - 1) {
                 mPageView.drawPage(1);
             }
-            mPageView.drawPage(0);
         } else {
             mPageView.drawBackground(0);
             mPageView.drawContent(1);
@@ -949,6 +954,7 @@ public abstract class PageLoader {
      * 解析数据
      */
     void parseCurChapter() {
+        ChapterContentHelp.getInstance().updateBookShelf(getBook(), ReplaceRuleManager.getLastUpTime());
         if (mCurChapter.getStatus() != Enum.PageStatus.FINISH) {
             Single.create((SingleOnSubscribe<TxtChapter>) e -> {
                 PageList pageList = new PageList(this);
@@ -986,6 +992,10 @@ public abstract class PageLoader {
      */
     void parsePrevChapter() {
         final int prevChapterPos = mCurChapterPos - 1;
+        if (prevChapterPos < 0) {
+            mPreChapter = null;
+            return;
+        }
         if (mPreChapter == null) mPreChapter = new TxtChapter(prevChapterPos);
         if (mPreChapter.getStatus() == Enum.PageStatus.FINISH || prevChapterPos < 0) {
             return;
@@ -1023,8 +1033,12 @@ public abstract class PageLoader {
      */
     void parseNextChapter() {
         final int nextChapterPos = mCurChapterPos + 1;
+        if (nextChapterPos >= getBook().getChapterList().size()) {
+            mNextChapter = null;
+            return;
+        }
         if (mNextChapter == null) mNextChapter = new TxtChapter(nextChapterPos);
-        if (mNextChapter.getStatus() == Enum.PageStatus.FINISH || nextChapterPos >= getBook().getChapterList().size()) {
+        if (mNextChapter.getStatus() == Enum.PageStatus.FINISH) {
             return;
         }
         Single.create((SingleOnSubscribe<TxtChapter>) e -> {

@@ -1,7 +1,11 @@
 package com.monke.monkeybook.widget.page;
 
+import android.text.TextUtils;
+
 import com.monke.monkeybook.base.observer.SimpleObserver;
 import com.monke.monkeybook.bean.ChapterListBean;
+import com.monke.monkeybook.dao.ChapterListBeanDao;
+import com.monke.monkeybook.dao.DbHelper;
 import com.monke.monkeybook.help.FileHelp;
 import com.monke.monkeybook.utils.IOUtils;
 import com.monke.monkeybook.utils.MD5Utils;
@@ -13,6 +17,7 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -32,7 +37,7 @@ import static com.monke.monkeybook.help.FileHelp.BLANK;
  * 加载本地书籍
  */
 public class PageLoaderText extends PageLoader {
-    private static final String TAG = "LocalPageLoader";
+    private static final String TAG = "PageLoaderText";
     //默认从文件中获取数据的长度
     private final static int BUFFER_SIZE = 512 * 1024;
     //没有标题的时候，每个章节的最大长度
@@ -46,6 +51,7 @@ public class PageLoaderText extends PageLoader {
             "^(\\s{0,4})(正文)(.{0,20})$",
             "^(.{0,4})(Chapter|chapter)(\\s{0,4})([0-9]{1,4})(.{0,30})$"};
 
+    private List<String> chapterPatterns = new ArrayList<>();
     //章节解析模式
     private Pattern mChapterPattern = null;
     //获取书本的文件
@@ -240,38 +246,27 @@ public class PageLoaderText extends PageLoader {
     }
 
     /**
-     * 从文件中提取一章的内容
-     */
-    private byte[] getChapterContentByte(ChapterListBean chapter) {
-        RandomAccessFile bookStream = null;
-        try {
-            bookStream = new RandomAccessFile(mBookFile, "r");
-            bookStream.seek(chapter.getStart());
-            int extent = (int) (chapter.getEnd() - chapter.getStart());
-            byte[] content = new byte[extent];
-            bookStream.read(content, 0, extent);
-            return content;
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            IOUtils.close(bookStream);
-        }
-
-        return new byte[0];
-    }
-
-    /**
      * 1. 检查文件中是否存在章节名
      * 2. 判断文件中使用的章节名类型的正则表达式
      *
      * @return 是否存在章节名
      */
     private boolean checkChapterType(RandomAccessFile bookStream) throws IOException {
+        chapterPatterns.clear();
+        if (!TextUtils.isEmpty(getBook().getBookInfoBean().getChapterUrl())) {
+            for (String x : getBook().getBookInfoBean().getChapterUrl().split("\n")) {
+                x = x.trim();
+                if (!TextUtils.isEmpty(x)) {
+                    chapterPatterns.add(x);
+                }
+            }
+        }
+        chapterPatterns.addAll(Arrays.asList(CHAPTER_PATTERNS));
         //首先获取128k的数据
         byte[] buffer = new byte[BUFFER_SIZE / 4];
         int length = bookStream.read(buffer, 0, buffer.length);
         //进行章节匹配
-        for (String str : CHAPTER_PATTERNS) {
+        for (String str : chapterPatterns) {
             Pattern pattern = Pattern.compile(str, Pattern.MULTILINE);
             Matcher matcher = pattern.matcher(new String(buffer, 0, length, mCharset));
             //如果匹配存在，那么就表示当前章节使用这种匹配方式
@@ -360,10 +355,30 @@ public class PageLoaderText extends PageLoader {
     }
 
     @Override
-    protected String getChapterContent(ChapterListBean chapter) throws Exception {
+    protected String getChapterContent(ChapterListBean chapter) {
         //从文件中获取数据
         byte[] content = getChapterContentByte(chapter);
         return new String(content, mCharset);
+    }
+
+    /**
+     * 从文件中提取一章的内容
+     */
+    private byte[] getChapterContentByte(ChapterListBean chapter) {
+        RandomAccessFile bookStream = null;
+        try {
+            bookStream = new RandomAccessFile(mBookFile, "r");
+            bookStream.seek(chapter.getStart());
+            int extent = (int) (chapter.getEnd() - chapter.getStart());
+            byte[] content = new byte[extent];
+            bookStream.read(content, 0, extent);
+            return content;
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            IOUtils.close(bookStream);
+        }
+        return new byte[0];
     }
 
     @Override
@@ -374,7 +389,12 @@ public class PageLoaderText extends PageLoader {
     @Override
     public void updateChapter() {
         mPageView.getActivity().toast("目录更新中");
-        Single.create((SingleOnSubscribe<List<ChapterListBean>>) e -> e.onSuccess(loadChapters()))
+        Single.create((SingleOnSubscribe<List<ChapterListBean>>) e -> {
+            DbHelper.getInstance().getmDaoSession().getChapterListBeanDao().queryBuilder()
+                    .where(ChapterListBeanDao.Properties.NoteUrl.eq(getBook().getNoteUrl()))
+                    .buildDelete().executeDeleteWithoutDetachingEntities();
+            e.onSuccess(loadChapters());
+        })
                 .compose(RxUtils::toSimpleSingle)
                 .subscribe(new SingleObserver<List<ChapterListBean>>() {
                     @Override

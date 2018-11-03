@@ -33,7 +33,7 @@ import static com.monke.monkeybook.utils.NetworkUtil.isNetWorkAvailable;
  */
 
 public class PageLoaderNet extends PageLoader {
-    private static final String TAG = "NetPageLoader";
+    private static final String TAG = "PageLoaderNet";
     private List<String> downloadingChapterList = new ArrayList<>();
     private ExecutorService executorService;
     private Scheduler scheduler;
@@ -105,7 +105,7 @@ public class PageLoaderNet extends PageLoader {
                 }
                 e.onComplete();
             })
-                    .flatMap(index -> WebBookModelImpl.getInstance().getBookContent(scheduler, getBook().getBookInfoBean().getName(), getBook().getChapterList(index).getDurChapterUrl(), index, getBook().getTag()))
+                    .flatMap(index -> WebBookModelImpl.getInstance().getBookContent(scheduler, getBook().getChapterList(chapterIndex), getBook().getBookInfoBean().getName()))
                     .observeOn(AndroidSchedulers.mainThread())
                     .compose(((BaseActivity) mPageView.getActivity()).bindUntilEvent(ActivityEvent.DESTROY))
                     .subscribe(new Observer<BookContentBean>() {
